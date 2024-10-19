@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Pharmacy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="text-2xl font-semibold text-gray-800">
+                <img src="https://res.cloudinary.com/dyofukel3/image/upload/v1729341086/healthai_logo_long_1_at5fta.png" alt="App Logo" class="h-10 inline-block"/>
+            </div>
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="symptomchecker.html" class="text-gray-700 hover:text-gray-900">Home</a>
+                <a href="epharmacy.html" class="text-gray-700 hover:text-gray-900">E-pharmacy</a>
+                <a href="healthintake.html" class="text-gray-700 hover:text-gray-900">Health Intake</a>
+                <a href="healthoverview.html" class="text-gray-700 hover:text-gray-900">Health Overview</a>
+                <a href="suggestion.html" class="text-gray-700 hover:text-gray-900">Suggestions</a>
+                <a href="mentalchecker.html" class="text-gray-700 hover:text-gray-900">Mental Health AI</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-gray-200">
+            <a href="symptomchecker.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+            <a href="epharmacy.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">E-pharmacy</a>
+            <a href="healthintake.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Health Intake</a>
+            <a href="healthoverview.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Health Overview</a>
+            <a href="suggestion.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Suggestions</a>
+            <a href="mentalchecker.html" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Mental Health AI</a>
+        </div>
+
+    <!-- Search Bar -->
+    <div class="flex justify-center mt-8">
+        <input 
+            id="search-bar" 
+            type="text" 
+            placeholder="Search for medications..." 
+            class="w-3/4 p-3 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+    </div>
+
+    <!-- Category Filter -->
+    <div class="flex justify-center mt-4">
+        <select 
+            id="category-filter" 
+            class="p-3 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            <option value="all">All Categories</option>
+        </select>
+    </div>
+
+    <!-- Medications Container -->
+    <div id="medications-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        <!-- Medication cards will be dynamically added here -->
+    </div>
+
+    <script>
+            document.getElementById('mobile-menu-button').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    <!-- Inline JavaScript -->
+    <script>
+        $(document).ready(function() {
+            // Fetch all medications on page load
+            fetchMedications();
+
+
+            // Search functionality
+            $('#search-bar').on('keyup', function() {
+                let query = $(this).val().toLowerCase();
+                $('.med-card').filter(function() {
+                    $(this).toggle($(this).data('name').toLowerCase().indexOf(query) > -1);
+                });
+            });
+
+            // Category filter functionality
+            $('#category-filter').on('change', function() {
+                let selectedCategory = $(this).val();
+                if (selectedCategory === 'all') {
+                    $('.med-card').show();
+                } else {
+                    $('.med-card').hide();
+                    $(`.med-card[data-category='${selectedCategory}']`).show();
+                }
+            });
+
+            // Function to fetch medications from Flask API
+            function fetchMedications() {
+                $.getJSON('/epharmacy', function(data) {
+                    const categories = new Set();
+                    $('#medications-container').empty();
+
+                    data.forEach(med => {
+                        categories.add(med.category);
+
+                        $('#medications-container').append(`
+                            <div 
+                                class="med-card bg-white rounded-lg shadow-md p-4" 
+                                data-name="${med.name}" 
+                                data-category="${med.category}">
+                                <img 
+                                    src="${med.image_url}" 
+                                    alt="${med.name}" 
+                                    class="w-full h-48 object-cover rounded-t-lg mb-4"
+                                >
+                                <h3 class="text-lg font-semibold">${med.name}</h3>
+                                <p class="text-sm text-gray-600">${med.description}</p>
+                                <p class="text-blue-600 font-bold mt-2">$${med.price}</p>
+                            </div>
+                        `);
+                    });
+
+                    // Update category filter
+                    $('#category-filter').empty().append('<option value="all">All Categories</option>');
+                    categories.forEach(category => {
+                        $('#category-filter').append(`<option value="${category}">${category}</option>`);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

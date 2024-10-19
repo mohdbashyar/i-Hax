@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Suggestions</title>
+
+    <!-- TailwindCSS & Chart.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+
+    <style>
+        /* Custom Chart Canvas Styling */
+        #nutrition-chart-canvas {
+            max-width: 350px;
+            max-height: 350px;
+            width: 100%;
+            height: auto;
+            margin: 0 auto; /* Center the chart */
+        }
+
+        body {
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            color: #001b20;
+            font-family: 'Gill Sans';
+        }
+
+        h2 {
+            color: #001b20;
+            font-family: 'Gill Sans';
+        }
+
+        p {
+            font-size: 20px;
+            font-family: Georgia;
+            color: rgb(105, 102, 102);
+            line-height: 1.5;
+        }
+
+        /* General Styles for Ordered List */
+        ol {
+            list-style-type: decimal; /* Use decimal numbers */
+            margin: 0;               /* Remove default margin */
+            padding-left: 20px;      /* Add padding to the left for indentation */
+            counter-reset: list-counter;
+        }
+
+        /* Styles for List Items */
+        ol li {
+            counter-increment: list-counter;
+            margin-bottom: 10px;     /* Space between list items */
+            font-size: 30px;         /* Font size for list items */
+            font-family: 'Georgia';
+            line-height: 1.5;        /* Increase line height for readability */
+            color: #4a4a4a;          /* Text color */
+        }
+        ol li::before {
+            content: counter(list-counter) ". "; /* Add the number before each item */
+        }
+        /* Optional: Hover Effect on List Items */
+        ol li:hover {
+            background-color: #f0f8ff; /* Light background on hover */
+            transition: background-color 0.3s; /* Smooth transition */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200">
+        <div class="container mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="text-2xl font-semibold text-gray-800">
+                <img src="https://res.cloudinary.com/dyofukel3/image/upload/v1729341086/healthai_logo_long_1_at5fta.png" alt="App Logo" class="h-10 inline-block"/>
+            </div>
+            <!-- Desktop Navigation -->
+            <div class="hidden lg:flex items-center space-x-8">
+                <a href="symptomchecker.html" class="text-gray-700 hover:text-gray-900">Home</a>
+                <a href="epharmacy.html" class="text-gray-700 hover:text-gray-900">E-pharmacy</a>
+                <a href="healthintake.html" class="text-gray-700 hover:text-gray-900">Health Intake</a>
+                <a href="healthoverview.html" class="text-gray-700 hover:text-gray-900">Health Overview</a>
+                <a href="suggestion.html" class="text-gray-700 hover:text-gray-900">Suggestions</a>
+                <a href="mentalchecker.html" class="text-gray-700 hover:text-gray-900">Mental Health AI</a>
+            </div>
+            <!-- Mobile Menu Button -->
+            <div class="lg:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden mobile-menu-transition bg-white border-t border-gray-100 lg:hidden">
+            <div class="container mx-auto px-4 py-2 space-y-3">
+                <a href="index.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Home</a>
+                <a href="epharmacy.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">E-pharmacy</a>
+                <a href="healthintake.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Health Intake</a>
+                <a href="healthoverview.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Health Overview</a>
+                <a href="suggestion.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Suggestions</a>
+                <a href="mentalchecker.html" class="block py-2 px-4 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg">Mental Health AI</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Introduction Section -->
+    <section class="bg-white py-16 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Diet and Lifestyle Suggestions</h1>
+        <p class="text-lg text-gray-600 mb-8">
+            Here we provide suitable diet suggestions and lifestyle routine recommendations.
+        </p>
+    </section>
+
+<!-- Diet and Lifestyle Section -->
+<section class="bg-white py-8 flex flex-wrap justify-center items-center gap-12">
+    <div class="flex flex-row justify-center items-start gap-12 w-full">
+        <!-- Diet Suggestions Section -->
+        <div class="w-full md:w-1/2 px-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Diet Suggestions</h2>
+            <p> Based on your symptoms, we suggest you to follow this dietary nutritions </p>
+            <br> </br>
+
+            <!-- Nutrition Chart -->
+            <div id="nutrition-chart">
+                <canvas id="nutrition-chart-canvas"></canvas>
+            </div>
+
+            <div class="text-left mt-6">
+                <ul class="space-y-4 text-lg text-gray-800">
+                    <li class="flex items-center gap-2 text-rose-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-rose-300 border-2 border-rose-500"></span> <b> Protein </b> 
+                    </li>
+                    <p> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                    <li class="flex items-center gap-2 text-blue-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-blue-300 border-2 border-blue-500"></span> <b> Carbs </b> 
+                    </li>
+                    <p> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                    <li class="flex items-center gap-2 text-yellow-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-yellow-300 border-2 border-yellow-500"></span> <b> Fat </b> 
+                    </li>
+                    <p> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                    <li class="flex items-center gap-2 text-teal-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-teal-200 border-2 border-teal-400"></span> <b> Fiber </b> 
+                    </li>
+                    <p> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                    <li class="flex items-center gap-2 text-purple-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-purple-300 border-2 border-purple-500"></span> <b> Minerals </b> 
+                    </li>
+                    <p> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                    <li class="flex items-center gap-2 text-orange-400" style="font-size: 200%; font-family: 'Gill Sans MT';">
+                        <span class="w-4 h-4 rounded-full bg-orange-200 border-2 border-orange-400"></span> <b> Sugar </b> 
+                    </li>
+                    <p style="font-family: 'Georgia'; font-size: 100%;" class="text-gray-800"> W3Schools is optimized for learning and training. Examples might be simplified to improve reading and learning. Tutorials, references, and examples are constantly reviewed to avoid errors, but we cannot warrant full correctness of all content. While using W3Schools, you agree to have read and accepted our terms of use, cookie and privacy policy. 
+                    </p>
+                </ul>
+            </div>
+
+            <button class="mt-6 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Get Personalized Diet Plan
+            </button>
+        </div>
+
+        <!-- Lifestyle Routine Recommendations Section -->
+        <div class="w-full md:w-1/2 px-6">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Lifestyle Routine Recommendations</h2>
+            <p class="text-lg text-gray-600 mb-8">
+                Based on your symptoms, we recommend the following lifestyle routine: 
+            </p>
+            <ol>
+                <li class="text-gray-800">Push Ups.</li>
+                    <p> You can collaborate on a code project, anyone in the world can find your GitHub code, use it, learn from it, and improve on it.
+                    </p>
+                <li class="text-gray-800">Meditate.</li>
+                    <p> You can collaborate on a code project, anyone in the world can find your GitHub code, use it, learn from it, and improve on it.
+                    </p>
+                <li  class="text-gray-800">Jogging. </li>
+                    <p> You can collaborate on a code project, anyone in the world can find your GitHub code, use it, learn from it, and improve on it.
+                    </p>
+                <li  class="text-gray-800">Pi Mampos.</li>
+                    <p> You can collaborate on a code project, anyone in the world can find your GitHub code, use it, learn from it, and improve on it.
+                    </p>
+            </ol>
+            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Get Personalized Lifestyle Plan
+            </button>
+        </div>
+    </div>
+</section>
+
+
+    <!-- Chart.js Script -->
+    <script>
+        const ctx = document.getElementById('nutrition-chart-canvas').getContext('2d');
+
+        document.getElementById('mobile-menu-button').addEventListener('click', () => {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Protein', 'Carbs', 'Fat', 'Fiber', 'Minerals', 'Sugar'],
+                datasets: [{
+                    label: 'Nutrients',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                },
+            }
+        });
+    </script>
+
+</body>
+
+</html>
